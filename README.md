@@ -10,7 +10,7 @@ Step 3 : Run the Jar from which generated in target folder. (Since this is the S
 >java -jar open-weather-currentlocation.jar
 
 Step 4 : Open the application swagger ui with the link below.
->http://localhost:8090/swagger-ui.html
+>http://localhost:8090/open-weather-currentlocation/swagger-ui.html
 
 Below Steps additional details. No action is required
 Step 5 : PostgreSQL Database used for this application is Amazon WebService Cloud (URL, UserName, Password changes is not required for this application)
