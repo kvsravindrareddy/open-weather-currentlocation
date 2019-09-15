@@ -4,6 +4,7 @@ import java.io.IOException;
 
 import javax.naming.ServiceUnavailableException;
 
+import org.apache.commons.collections4.IterableUtils;
 import org.apache.http.HttpResponse;
 import org.apache.http.client.ClientProtocolException;
 import org.apache.http.client.methods.HttpGet;
@@ -17,6 +18,8 @@ import org.springframework.stereotype.Service;
 import org.springframework.web.client.RestTemplate;
 import org.springframework.web.util.UriComponentsBuilder;
 
+import com.ravindra.exception.InvalidInputException;
+import com.ravindra.exception.NoDataFoundException;
 import com.ravindra.model.CurrentWeather;
 import com.ravindra.repo.CurrentWeatherRepo;
 
@@ -54,6 +57,10 @@ public class CurrentWeatherService {
 	 */
 	public CurrentWeather getCurrentWhether(String city) throws ServiceUnavailableException, IOException {
 		log.info("Begin getCurrentWhether()-CurrentWeatherService");
+		if(city.length()<3)
+		{
+			throw new InvalidInputException("Please provide City name atleast 3 characters");
+		}
 		CloseableHttpClient client = HttpClientBuilder.create().build();
 		String serviceUrl = uriBuilder(city);
 		log.debug("Weather serivce URL : " + serviceUrl);
@@ -64,6 +71,7 @@ public class CurrentWeatherService {
 		CurrentWeather currentWeather = null;
 		if (statusCode == 200) {
 			currentWeather = new CurrentWeather();
+			currentWeather.setId(0L);
 			currentWeather.setCityName(city);
 			String weatherResponse = restTemplate.getForObject(serviceUrl, String.class);
 			JSONObject responseJson = new JSONObject(weatherResponse);
@@ -160,6 +168,11 @@ public class CurrentWeatherService {
 	 */
 	public Iterable<CurrentWeather> getAllWeatherData() {
 		log.info("Begin getAllWeatherData()-CurrentWeatherService");
-		return currentWeatherRepo.findAll();
+		Iterable<CurrentWeather> itr = currentWeatherRepo.findAll();
+		int size = IterableUtils.size(itr);
+		if (size <=1) {
+			throw new NoDataFoundException("No Weather data to delete from Database");
+		}
+		return itr;
 	}
 }

@@ -23,19 +23,43 @@ public class ExceptionHandlerConfig extends ResponseEntityExceptionHandler {
 	 */
 	@ExceptionHandler(ServiceUnavilableException.class)
 	public ResponseEntity<ErrorDetails> handleServiceUnavailableException(ServiceUnavilableException e) {
-		ErrorDetails error = new ErrorDetails(404, e.toString());
+		ErrorDetails error = new ErrorDetails(601, e.toString());
 		return new ResponseEntity<>(error, HttpStatus.NOT_FOUND);
 	}
 
 	/**
-	 * Custom Exception handler method to handle if the Comic service not found
+	 * Custom Exception handler method to handle if the service not found
 	 * 
 	 * @param ServiceUnavilableException
 	 * @return ResponseEntity<ErrorDetails>
 	 */
 	@ExceptionHandler(ServiceNotFoundException.class)
 	public ResponseEntity<ErrorDetails> handleComicServiceNotFoundException(ServiceNotFoundException e) {
-		ErrorDetails error = new ErrorDetails(404, e.toString());
+		ErrorDetails error = new ErrorDetails(602, e.toString());
 		return new ResponseEntity<>(error, HttpStatus.NOT_FOUND);
+	}
+
+	/**
+	 * Custom Exception handler method to handle if No data found
+	 * 
+	 * @param NoDataFoundException
+	 * @return ResponseEntity<ErrorDetails>
+	 */
+	@ExceptionHandler(NoDataFoundException.class)
+	public ResponseEntity<ErrorDetails> noDataFoundException(NoDataFoundException e) {
+		ErrorDetails error = new ErrorDetails(603, e.toString());
+		return new ResponseEntity<>(error, HttpStatus.NO_CONTENT);
+	}
+
+	/**
+	 * Custom Exception handler method to handle if the input is invalid
+	 * 
+	 * @param InvalidInputException
+	 * @return ResponseEntity<ErrorDetails>
+	 */
+	@ExceptionHandler(InvalidInputException.class)
+	public ResponseEntity<ErrorDetails> noDataFoundException(InvalidInputException e) {
+		ErrorDetails error = new ErrorDetails(604, e.toString());
+		return new ResponseEntity<>(error, HttpStatus.BAD_REQUEST);
 	}
 }
