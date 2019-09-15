@@ -4,6 +4,11 @@ import lombok.AllArgsConstructor;
 import lombok.NoArgsConstructor;
 import lombok.ToString;
 
+/**
+ * This is to throw exception if the external is not avaialble.
+ * @author Veera Shankara Ravindra Reddy Kakarla
+ *
+ */
 @ToString
 @AllArgsConstructor
 @NoArgsConstructor

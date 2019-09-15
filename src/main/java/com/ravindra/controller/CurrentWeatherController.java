@@ -21,12 +21,14 @@ import com.ravindra.service.CurrentWeatherService;
 import lombok.extern.slf4j.Slf4j;
 
 /**
+ * This class created to test the Weather API with Spring Boot Web MVC using
+ * Thymeleaf template engine
  * 
- * @author VeeraShankara
+ * @author Veera Shankara Ravindra Reddy Kakarla
  *
  */
 @Controller
-@CrossOrigin(origins="*")
+@CrossOrigin(origins = "*")
 @RequestMapping("/openmaps")
 @Slf4j
 public class CurrentWeatherController {
@@ -35,22 +37,38 @@ public class CurrentWeatherController {
 	private CurrentWeatherService currentWeatherService;
 
 	/**
+	 * Get the Weather API details by calling the Open Weather API URL
+	 * http://api.openweathermap.org/data/2.5/weather
 	 * 
-	 * @return
+	 * @return String Weather API Response
 	 */
 	@GetMapping(value = "/weather")
-	public String getCurrentWeather(@RequestParam(value="city", required=true) String city) {
-		log.debug("Current weather search city : "+city);
-		//model.addAttribute("currentWeather", currentWeatherService.getCurrentWhether(city));
+	public String getCurrentWeather(@RequestParam(value = "city", required = true) String city) {
+		log.debug("Current weather search city : " + city);
+		// model.addAttribute("currentWeather",
+		// currentWeatherService.getCurrentWhether(city));
 		return "weather";
 	}
 
+	/**
+	 * Save the Weather API details the into PostgreSQL database by giving the City
+	 * name as the input parameter
+	 * 
+	 * @param String city
+	 * @throws ServiceUnavailableException
+	 * @throws IOException
+	 */
 	@PostMapping(value = "/weather")
 	public void saveWeatherDetails(@RequestParam String city) throws ServiceUnavailableException, IOException {
 		log.info("Begin saveWeatherDetails()-CurrentWeatherController");
 		currentWeatherService.saveWeatherDetails(city);
 	}
 
+	/**
+	 * Save the CurrentWeather object into PostgreSQL database
+	 * 
+	 * @param CurrentWeather request
+	 */
 	@PostMapping(value = "/weathersave")
 	public void saveWeatherDetailsResponse(@RequestBody CurrentWeather request) {
 		log.info("Begin saveWeatherDetailsResponse()-CurrentWeatherController");

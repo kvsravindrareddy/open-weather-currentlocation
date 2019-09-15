@@ -20,8 +20,9 @@ import com.ravindra.service.CurrentWeatherService;
 import lombok.extern.slf4j.Slf4j;
 
 /**
+ * This method created to create the CRUD rest end points for Weather API
  * 
- * @author VeeraShankara
+ * @author Veera Shankara Ravindra Reddy Kakarla
  *
  */
 @RestController
@@ -34,10 +35,10 @@ public class CurrentWeatherRestController {
 	private CurrentWeatherService currentWhetherService;
 
 	/**
+	 * Get the Weather API details by calling the Open Weather API URL
+	 * http://api.openweathermap.org/data/2.5/weather
 	 * 
-	 * @return
-	 * @throws ServiceUnavailableException
-	 * @throws IOException 
+	 * @return CurrentWeather Weather API Response
 	 */
 	@GetMapping(value = "/weather")
 	public CurrentWeather getCurrentWhether(@RequestParam String city) throws ServiceUnavailableException, IOException {
@@ -45,12 +46,25 @@ public class CurrentWeatherRestController {
 		return currentWhetherService.getCurrentWhether(city);
 	}
 
+	/**
+	 * Save the Weather API details the into PostgreSQL database by giving the City
+	 * name as the input parameter
+	 * 
+	 * @param String city
+	 * @throws ServiceUnavailableException
+	 * @throws IOException
+	 */
 	@PostMapping(value = "/weather")
 	public void saveWeatherDetails(@RequestParam String city) throws ServiceUnavailableException, IOException {
 		log.info("Begin saveWeatherDetails()-CurrentWeatherRestController");
 		currentWhetherService.saveWeatherDetails(city);
 	}
 
+	/**
+	 * Save the CurrentWeather object into PostgreSQL database
+	 * 
+	 * @param CurrentWeather request
+	 */
 	@PostMapping(value = "/weathersave")
 	public void saveWeatherDetailsResponse(@RequestBody CurrentWeather request) {
 		log.info("Begin saveWeatherDetailsResponse()-CurrentWeatherRestController");

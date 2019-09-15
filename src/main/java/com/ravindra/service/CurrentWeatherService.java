@@ -23,8 +23,9 @@ import com.ravindra.repo.CurrentWeatherRepo;
 import lombok.extern.slf4j.Slf4j;
 
 /**
+ * This is the service class. All the business validations done here.
  * 
- * @author VeeraShankara
+ * @author Veera Shankara Ravindra Reddy Kakarla
  *
  */
 @Service
@@ -48,7 +49,7 @@ public class CurrentWeatherService {
 	 * 
 	 * @param String city name
 	 * @return CurrentWeather
-	 * @throws IOException 
+	 * @throws IOException
 	 * @throws ServiceUnavailableException
 	 */
 	public CurrentWeather getCurrentWhether(String city) throws ServiceUnavailableException, IOException {
@@ -77,9 +78,9 @@ public class CurrentWeatherService {
 	 * 
 	 * @param String currentCity
 	 * @return String weather API URL with city and subscription key
-	 * @throws ServiceUnavailableException 
-	 * @throws IOException 
-	 * @throws ClientProtocolException 
+	 * @throws ServiceUnavailableException
+	 * @throws IOException
+	 * @throws ClientProtocolException
 	 */
 	private String uriBuilder(String currentCity) throws ServiceUnavailableException, IOException {
 		log.info("Begin uriBuilder()-CurrentWeatherService");
@@ -91,10 +92,8 @@ public class CurrentWeatherService {
 		String serviceUrl = "";
 		if (statusCode == 200) {
 			serviceUrl = UriComponentsBuilder.fromHttpUrl(currentWhetherUrl).queryParam("q", currentCity)
-			.queryParam("APPID", subscriptionkey).build().toUri().toString();
-		}
-		else
-		{
+					.queryParam("APPID", subscriptionkey).build().toUri().toString();
+		} else {
 			log.error("ServiceNotFoundException occured in getCurrentWhether " + statusCode);
 			throw new ServiceUnavailableException(
 					"Open Weather API Service is not available at this time. Please try again after sometime.");
@@ -107,7 +106,7 @@ public class CurrentWeatherService {
 	 * 
 	 * @param String city
 	 * @throws ServiceUnavailableException
-	 * @throws IOException 
+	 * @throws IOException
 	 */
 	public void saveWeatherDetails(String city) throws ServiceUnavailableException, IOException {
 		log.info("Begin saveWeatherDetails()-CurrentWeatherService");
