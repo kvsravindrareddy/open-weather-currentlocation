@@ -1,0 +1,62 @@
+<html xmlns:th="http://thymeleaf.org">
+<head>
+<title>Holon Interview Assessment</title>
+<style>
+table {
+	width: 100%;
+}
+
+table td, table th {
+	border: 1px solid grey;
+}
+
+table th {
+	background: #eee;
+}
+
+.pagination-div {
+	user-select: none;
+}
+
+.pagination-div span {
+	border-radius: 3px;
+	border: 1px solid #999;
+	padding: 5px;
+	margin: 10px 0px 0px 10px;
+	display: inline-block
+}
+
+span.selected {
+	background: #ccf;
+}
+</style>
+</head>
+<body>
+	<form action="#" th:action="@{/openmaps/weather}" method="get">
+		<table border="1">
+			<tr>
+				<th>ID</th>
+				<th>City Name</th>
+				<th>Weather Description</th>
+				<th>Current Temperature</th>
+				<th>Max Temperature</th>
+				<th>Min Temperature</th>
+				<th>Sunrise</th>
+				<th>Sunset</th>
+			</tr>
+			<tr th:each="weatherobj:${weatherreports}">
+				<td th:text="${weatherobj.id}"></td>
+				<td th:text="${weatherobj.cityName}"></td>
+				<td th:text="${weatherobj.weatherDesc}"></td>
+				<td th:text="${weatherobj.currTemp}"></td>
+				<td th:text="${weatherobj.tempMin}"></td>
+				<td th:text="${weatherobj.tempMax}"></td>
+				<td th:text="${weatherobj.sunrise}"></td>
+				<td th:text="${weatherobj.sunset}"></td>
+			</tr>
+		</table>
+		<input type="submit" value="Submit" />
+	</form>
+	<strong><a href="/">Click here to go back</a></strong>
+</body>
+</html>

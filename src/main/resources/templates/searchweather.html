@@ -1,0 +1,13 @@
+<html xmlns:th="http://thymeleaf.org">
+<head>
+<title>Holon Interview Assessment</title>
+</head>
+<body>
+	<form th:action="@{/openmaps/weather}" method="get">
+		<input type="text" th:name="city" th:placeholder="Enter City Name" />
+		<div class="clearfix">
+			<button type="submit">Reset</button>
+		</div>
+	</form>
+</body>
+</html>
