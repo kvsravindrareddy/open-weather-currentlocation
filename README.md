@@ -6,7 +6,7 @@ Step 1 : Clone the Application
 Step 2 : Build the application using maven build tool
 >mvn clean install -DskipTests=true
 
-Step 3 : Run the Jar from which generated in target folder. (Since this is the Spring Boot application it runs on the Embed tomcat server)
+Step 3 : Run the Jar file which generated in target folder. (Since this is the Spring Boot application it runs on the Embed tomcat server)
 >java -jar open-weather-currentlocation.jar
 
 Step 4 : Open the application swagger ui with the link below.
