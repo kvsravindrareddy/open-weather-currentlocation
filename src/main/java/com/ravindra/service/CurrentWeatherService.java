@@ -20,6 +20,7 @@ import org.springframework.web.util.UriComponentsBuilder;
 
 import com.ravindra.exception.InvalidInputException;
 import com.ravindra.exception.NoDataFoundException;
+import com.ravindra.exception.ServiceNotFoundException;
 import com.ravindra.model.CurrentWeather;
 import com.ravindra.repo.CurrentWeatherRepo;
 
@@ -55,10 +56,9 @@ public class CurrentWeatherService {
 	 * @throws IOException
 	 * @throws ServiceUnavailableException
 	 */
-	public CurrentWeather getCurrentWhether(String city) throws ServiceUnavailableException, IOException {
+	public CurrentWeather getCurrentWhether(String city) throws IOException {
 		log.info("Begin getCurrentWhether()-CurrentWeatherService");
-		if(city.length()<3)
-		{
+		if (city.length() < 3) {
 			throw new InvalidInputException("Please provide City name atleast 3 characters");
 		}
 		CloseableHttpClient client = HttpClientBuilder.create().build();
@@ -86,7 +86,7 @@ public class CurrentWeatherService {
 			currentWeather.setSunset(sysObj.getBigInteger("sunset"));
 		} else {
 			log.error("ServiceNotFoundException occured in getCurrentWhether " + statusCode);
-			throw new ServiceUnavailableException(
+			throw new ServiceNotFoundException(
 					"Open Weather API Service is not available at this time. Please try again after sometime.");
 		}
 		log.info("End getCurrentWhether()-CurrentWeatherService");
@@ -103,7 +103,7 @@ public class CurrentWeatherService {
 	 * @throws IOException
 	 * @throws ClientProtocolException
 	 */
-	private String uriBuilder(String currentCity) throws ServiceUnavailableException, IOException {
+	private String uriBuilder(String currentCity) throws IOException {
 		log.info("Begin uriBuilder()-CurrentWeatherService");
 		return UriComponentsBuilder.fromHttpUrl(currentWhetherUrl).queryParam("q", currentCity)
 				.queryParam("APPID", subscriptionkey).build().toUri().toString();
@@ -127,10 +127,10 @@ public class CurrentWeatherService {
 	 * @throws ServiceUnavailableException
 	 * @throws IOException
 	 */
-	public void saveWeatherDetails(String city) throws ServiceUnavailableException, IOException {
+	public CurrentWeather saveWeatherDetails(String city) throws ServiceUnavailableException, IOException {
 		log.info("Begin saveWeatherDetails()-CurrentWeatherService");
 		CurrentWeather currentWeatcher = getCurrentWhether(city);
-		currentWeatherRepo.save(currentWeatcher);
+		return currentWeatherRepo.save(currentWeatcher);
 	}
 
 	/**
@@ -138,9 +138,9 @@ public class CurrentWeatherService {
 	 * 
 	 * @param CurrentWeather request
 	 */
-	public void saveWeatherDetailsResponse(CurrentWeather request) {
+	public CurrentWeather saveWeatherDetailsResponse(CurrentWeather request) {
 		log.info("Begin saveWeatherDetailsResponse()-CurrentWeatherService");
-		currentWeatherRepo.save(request);
+		return currentWeatherRepo.save(request);
 	}
 
 	/**
@@ -170,7 +170,7 @@ public class CurrentWeatherService {
 		log.info("Begin getAllWeatherData()-CurrentWeatherService");
 		Iterable<CurrentWeather> itr = currentWeatherRepo.findAll();
 		int size = IterableUtils.size(itr);
-		if (size <=1) {
+		if (size < 1) {
 			throw new NoDataFoundException("No Weather data to delete from Database");
 		}
 		return itr;

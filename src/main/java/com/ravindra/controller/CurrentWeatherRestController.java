@@ -9,6 +9,7 @@ import org.springframework.web.bind.annotation.CrossOrigin;
 import org.springframework.web.bind.annotation.DeleteMapping;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PostMapping;
+import org.springframework.web.bind.annotation.PutMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestParam;
@@ -55,20 +56,28 @@ public class CurrentWeatherRestController {
 	 * @throws IOException
 	 */
 	@PostMapping(value = "/weather")
-	public void saveWeatherDetails(@RequestParam String city) throws ServiceUnavailableException, IOException {
+	public CurrentWeather saveWeatherDetails(@RequestParam(required = true, name = "city") String city,
+			@RequestParam(required = false, name = "savetodatabase") boolean savetodatabase)
+			throws ServiceUnavailableException, IOException {
 		log.info("Begin saveWeatherDetails()-CurrentWeatherRestController");
-		currentWhetherService.saveWeatherDetails(city);
+		CurrentWeather currentWeather = new CurrentWeather();
+		if (savetodatabase) {
+			currentWeather = currentWhetherService.saveWeatherDetails(city);
+		} else {
+			currentWeather = currentWhetherService.getCurrentWhether(city);
+		}
+		return currentWeather;
 	}
-
+	
 	/**
 	 * Save the CurrentWeather object into PostgreSQL database
 	 * 
 	 * @param CurrentWeather request
 	 */
-	@PostMapping(value = "/weathersave")
-	public void saveWeatherDetailsResponse(@RequestBody CurrentWeather request) {
+	@PutMapping(value = "/weathersave")
+	public CurrentWeather saveOrUpdateWeatherDetails(@RequestBody CurrentWeather request) {
 		log.info("Begin saveWeatherDetailsResponse()-CurrentWeatherRestController");
-		currentWhetherService.saveWeatherDetailsResponse(request);
+		return currentWhetherService.saveWeatherDetailsResponse(request);
 	}
 
 	/**

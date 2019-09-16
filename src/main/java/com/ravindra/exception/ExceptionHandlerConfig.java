@@ -15,19 +15,6 @@ import org.springframework.web.servlet.mvc.method.annotation.ResponseEntityExcep
 public class ExceptionHandlerConfig extends ResponseEntityExceptionHandler {
 
 	/**
-	 * Custom Exception handler method to return the custom status code for
-	 * ServiceUnavilableException
-	 * 
-	 * @param ServiceUnavilableException
-	 * @return ResponseEntity<ErrorDetails>
-	 */
-	@ExceptionHandler(ServiceUnavilableException.class)
-	public ResponseEntity<ErrorDetails> handleServiceUnavailableException(ServiceUnavilableException e) {
-		ErrorDetails error = new ErrorDetails(601, e.toString());
-		return new ResponseEntity<>(error, HttpStatus.NOT_FOUND);
-	}
-
-	/**
 	 * Custom Exception handler method to handle if the service not found
 	 * 
 	 * @param ServiceUnavilableException
