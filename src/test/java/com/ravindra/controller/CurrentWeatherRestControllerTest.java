@@ -1,7 +1,6 @@
 package com.ravindra.controller;
 
 import java.io.ByteArrayInputStream;
-import java.util.Arrays;
 import java.util.List;
 
 import org.junit.Assert;
@@ -11,6 +10,7 @@ import org.mockito.Mockito;
 import org.mockito.MockitoAnnotations;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.mock.mockito.MockBean;
+import org.springframework.http.MediaType;
 import org.springframework.test.web.client.MockRestServiceServer;
 import org.springframework.test.web.servlet.MockMvc;
 import org.springframework.test.web.servlet.MvcResult;
@@ -44,7 +44,7 @@ public class CurrentWeatherRestControllerTest extends OpenWeatherCurrentlocation
 	private MockRestServiceServer mockServer;
 
 	ByteArrayInputStream stream;
-	
+
 	private Gson gson = null;
 
 	@Before
@@ -69,7 +69,12 @@ public class CurrentWeatherRestControllerTest extends OpenWeatherCurrentlocation
 
 	@Test
 	public void testSaveWeatherDetails_True() throws Exception {
-		String requestJson = "";
+		String requestJson = "{  \"id\": 8,\r\n" + "    \"cityName\": \"Hyderabad\",\r\n"
+				+ "    \"weatherDesc\": \"Hyderabad Weather\",\r\n" + "    \"currTemp\": 25,\r\n"
+				+ "    \"tempMin\": 24,\r\n" + "    \"tempMax\": 26,\r\n" + "    \"sunrise\": 125255,\r\n"
+				+ "    \"sunset\": 5546\r\n" + "  }";
+		CurrentWeather currentWeather = gson.fromJson(requestJson, CurrentWeather.class);
+		Mockito.when(currentWeatherRepo.save(currentWeather));
 		mockMvc.perform(
 				MockMvcRequestBuilders.post("/openmapsrestapi/weather").contentType("application/json;charset=UTF-8")
 						.param("city", "Hyderabad").param("savetodatabase", "true").content(requestJson))
@@ -116,8 +121,10 @@ public class CurrentWeatherRestControllerTest extends OpenWeatherCurrentlocation
 				+ "    \"weatherDesc\": \"Delhi Weather\",\r\n" + "    \"currTemp\": 25,\r\n"
 				+ "    \"tempMin\": 26,\r\n" + "    \"tempMax\": 28,\r\n" + "    \"sunrise\": 125255,\r\n"
 				+ "    \"sunset\": 5546\r\n" + "  }\r\n" + "]";
-		List<CurrentWeather> list = gson.fromJson(json, new TypeToken<List<CurrentWeather>>(){}.getType());
-		Iterable<CurrentWeather> itr = 	() -> Iterators.forArray(list.toArray(new CurrentWeather[list.size()]));;
+		List<CurrentWeather> list = gson.fromJson(json, new TypeToken<List<CurrentWeather>>() {
+		}.getType());
+		Iterable<CurrentWeather> itr = () -> Iterators.forArray(list.toArray(new CurrentWeather[list.size()]));
+		;
 		Mockito.when(currentWeatherRepo.findAll()).thenReturn(itr);
 		mockMvc.perform(MockMvcRequestBuilders.get("/openmapsrestapi/weatherrecords"))
 				.andExpect(MockMvcResultMatchers.status().isOk())
@@ -126,15 +133,13 @@ public class CurrentWeatherRestControllerTest extends OpenWeatherCurrentlocation
 
 	@Test
 	public void testDeleteWeatherRecords() throws Exception {
-		mockMvc.perform(MockMvcRequestBuilders.delete("/openmapsrestapi/deleteweatherrecords"))
-				.andExpect(MockMvcResultMatchers.status().isOk())
-				.andExpect(MockMvcResultMatchers.content().contentType("application/json;charset=UTF-8")).andReturn();
+		mockMvc.perform(MockMvcRequestBuilders.delete("/openmapsrestapi/deleteweatherrecords")
+				.accept(MediaType.APPLICATION_JSON_VALUE)).andExpect(MockMvcResultMatchers.status().isOk()).andReturn();
 	}
 
 	@Test
 	public void testDeleteWeatherRecord() throws Exception {
-		mockMvc.perform(MockMvcRequestBuilders.delete("/openmapsrestapi/deleteweatherrecord"))
-				.andExpect(MockMvcResultMatchers.status().isOk())
-				.andExpect(MockMvcResultMatchers.content().contentType("application/json;charset=UTF-8")).andReturn();
+		mockMvc.perform(MockMvcRequestBuilders.delete("/openmapsrestapi/deleteweatherrecord").param("id", "8").accept(MediaType.APPLICATION_JSON_VALUE))
+				.andExpect(MockMvcResultMatchers.status().isOk()).andReturn();
 	}
 }
