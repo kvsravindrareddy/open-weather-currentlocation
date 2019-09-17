@@ -1,10 +1,13 @@
 package com.ravindra.controller;
 
 import java.io.ByteArrayInputStream;
+import java.util.Arrays;
+import java.util.List;
 
 import org.junit.Assert;
 import org.junit.Before;
 import org.junit.Test;
+import org.mockito.Mockito;
 import org.mockito.MockitoAnnotations;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.mock.mockito.MockBean;
@@ -19,7 +22,11 @@ import org.springframework.web.client.RestTemplate;
 import org.springframework.web.client.support.RestGatewaySupport;
 import org.springframework.web.context.WebApplicationContext;
 
+import com.google.common.collect.Iterators;
+import com.google.gson.Gson;
+import com.google.gson.reflect.TypeToken;
 import com.ravindra.OpenWeatherCurrentlocationApplicationTests;
+import com.ravindra.model.CurrentWeather;
 import com.ravindra.repo.CurrentWeatherRepo;
 
 public class CurrentWeatherRestControllerTest extends OpenWeatherCurrentlocationApplicationTests {
@@ -37,6 +44,8 @@ public class CurrentWeatherRestControllerTest extends OpenWeatherCurrentlocation
 	private MockRestServiceServer mockServer;
 
 	ByteArrayInputStream stream;
+	
+	private Gson gson = null;
 
 	@Before
 	public void setUp() {
@@ -45,6 +54,7 @@ public class CurrentWeatherRestControllerTest extends OpenWeatherCurrentlocation
 		RestGatewaySupport gateway = new RestGatewaySupport();
 		gateway.setRestTemplate(template);
 		mockServer = MockRestServiceServer.createServer(gateway);
+		gson = new Gson();
 	}
 
 	@Test
@@ -58,10 +68,20 @@ public class CurrentWeatherRestControllerTest extends OpenWeatherCurrentlocation
 	}
 
 	@Test
-	public void testSaveWeatherDetails() throws Exception {
+	public void testSaveWeatherDetails_True() throws Exception {
 		String requestJson = "";
-		mockMvc.perform(MockMvcRequestBuilders.post("/openmapsrestapi/weather")
-				.contentType("application/json;charset=UTF-8").param("city", "Hyderabad").content(requestJson))
+		mockMvc.perform(
+				MockMvcRequestBuilders.post("/openmapsrestapi/weather").contentType("application/json;charset=UTF-8")
+						.param("city", "Hyderabad").param("savetodatabase", "true").content(requestJson))
+				.andExpect(MockMvcResultMatchers.status().isOk());
+	}
+
+	@Test
+	public void testSaveWeatherDetails_False() throws Exception {
+		String requestJson = "";
+		mockMvc.perform(
+				MockMvcRequestBuilders.post("/openmapsrestapi/weather").contentType("application/json;charset=UTF-8")
+						.param("city", "Hyderabad").param("savetodatabase", "false").content(requestJson))
 				.andExpect(MockMvcResultMatchers.status().isOk());
 	}
 
@@ -77,7 +97,28 @@ public class CurrentWeatherRestControllerTest extends OpenWeatherCurrentlocation
 	}
 
 	@Test
+	public void testGetAllWeatherData_NoData() throws Exception {
+		mockMvc.perform(MockMvcRequestBuilders.get("/openmapsrestapi/weatherrecords"))
+				.andExpect(MockMvcResultMatchers.status().is(204))
+				.andExpect(MockMvcResultMatchers.content().contentType("application/json;charset=UTF-8")).andReturn();
+	}
+
+	@Test
 	public void testGetAllWeatherData() throws Exception {
+		String json = "[\r\n" + "  {\r\n" + "    \"id\": 7,\r\n" + "    \"cityName\": \"Donakonda\",\r\n"
+				+ "    \"weatherDesc\": \"Donakonda Weather\",\r\n" + "    \"currTemp\": 25,\r\n"
+				+ "    \"tempMin\": 24,\r\n" + "    \"tempMax\": 26,\r\n" + "    \"sunrise\": 125255,\r\n"
+				+ "    \"sunset\": 5546\r\n" + "  },\r\n" + "  {\r\n" + "    \"id\": 8,\r\n"
+				+ "    \"cityName\": \"Hyderabad\",\r\n" + "    \"weatherDesc\": \"Hyderabad Weather\",\r\n"
+				+ "    \"currTemp\": 25,\r\n" + "    \"tempMin\": 24,\r\n" + "    \"tempMax\": 26,\r\n"
+				+ "    \"sunrise\": 125255,\r\n" + "    \"sunset\": 5546\r\n" + "  },\r\n" + "  {\r\n"
+				+ "    \"id\": 9,\r\n" + "    \"cityName\": \"Delhi\",\r\n"
+				+ "    \"weatherDesc\": \"Delhi Weather\",\r\n" + "    \"currTemp\": 25,\r\n"
+				+ "    \"tempMin\": 26,\r\n" + "    \"tempMax\": 28,\r\n" + "    \"sunrise\": 125255,\r\n"
+				+ "    \"sunset\": 5546\r\n" + "  }\r\n" + "]";
+		List<CurrentWeather> list = gson.fromJson(json, new TypeToken<List<CurrentWeather>>(){}.getType());
+		Iterable<CurrentWeather> itr = 	() -> Iterators.forArray(list.toArray(new CurrentWeather[list.size()]));;
+		Mockito.when(currentWeatherRepo.findAll()).thenReturn(itr);
 		mockMvc.perform(MockMvcRequestBuilders.get("/openmapsrestapi/weatherrecords"))
 				.andExpect(MockMvcResultMatchers.status().isOk())
 				.andExpect(MockMvcResultMatchers.content().contentType("application/json;charset=UTF-8")).andReturn();
@@ -89,7 +130,7 @@ public class CurrentWeatherRestControllerTest extends OpenWeatherCurrentlocation
 				.andExpect(MockMvcResultMatchers.status().isOk())
 				.andExpect(MockMvcResultMatchers.content().contentType("application/json;charset=UTF-8")).andReturn();
 	}
-	
+
 	@Test
 	public void testDeleteWeatherRecord() throws Exception {
 		mockMvc.perform(MockMvcRequestBuilders.delete("/openmapsrestapi/deleteweatherrecord"))
