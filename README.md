@@ -22,9 +22,9 @@ CurrentWeatherController.java (This is the MVC controller)
 
 Step 8 : CurrentWeatherRestController.java (This is rest controller contains all the Rest End points.
 
-Step 9 : Junit is in-progress ( 48.6% Code Covered and some of the test cases are failing)
+Step 9 : Junit is completed but failing few test cases. ( 60.1% Code Covered)
 
-Step 10 : UI may not be completed but trying to cover as much as possible
+Step 10 : Implemented Swagger API documenation for API's
 
 Step 11 : Application loggers are added
 
