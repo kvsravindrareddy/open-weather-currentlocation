@@ -171,7 +171,7 @@ public class CurrentWeatherService {
 		Iterable<CurrentWeather> itr = currentWeatherRepo.findAll();
 		int size = IterableUtils.size(itr);
 		if (size < 1) {
-			throw new NoDataFoundException("No Weather data to delete from Database");
+			throw new NoDataFoundException("No Weather data to retrive from Database");
 		}
 		return itr;
 	}
