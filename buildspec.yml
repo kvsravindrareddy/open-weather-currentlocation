@@ -16,4 +16,4 @@ phases:
       - echo Build completed on `date`
 artifacts:
   files:
-    - target/open-weather-currentlocation-1.0.jar
+    - target/open-weather-currentlocation.jar
